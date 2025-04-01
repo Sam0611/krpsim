@@ -1,0 +1,26 @@
+- utiliser meson
+- parsing
+
+- output :
+    nombre de processus
+    nombre de stock
+    nombre de choses a optimiser
+    afficher les processus effectués et quand (0: process1, 10: process2, ...)
+    afficher condition d'arret
+    afficher les stocks restants
+
+    ./krpsim simple 10
+    Nice file! 3 processes, 4 stocks, 1 to optimize
+    Evaluating .................. done.
+    Main walk
+    0:equipment_purchase
+    10:product_creation
+    40:delivery
+    no more process doable at time 61
+    Stock :
+    happy_client=> 1
+    product => 0
+    equipment => 0
+    euro => 2
+
+- print and save output in a file (conf_file_output)
