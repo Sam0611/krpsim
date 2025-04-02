@@ -1,4 +1,4 @@
-- utiliser meson
+
 - parsing
 
 - output :
@@ -24,3 +24,10 @@
     euro => 2
 
 - print and save output in a file (conf_file_output)
+
+
+Infos utiles :
+
+A process can start as soon as the stocks allow it. This can happen several times in the same cycle.
+
+The second parameter of krpsim program is the waiting time the program will not have to exceed.
