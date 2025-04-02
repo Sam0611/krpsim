@@ -5,12 +5,18 @@
 #define RED "\033[31;01m"
 #define RESET "\033[00m"
 
-int main()
+int main(int ac, char **av)
 {
-    std::ifstream conf_file("resources/ikea");
+    if (ac != 3)
+    {
+        std::cerr << RED << "Two arguments needed : file and delay" << RESET << std::endl;
+        return (1);
+    }
+
+    std::ifstream conf_file(av[1]);
 	if (!conf_file)
 	{
-		std::cerr << RED << "Error: could not open file." << RESET << std::endl;
+		std::cerr << RED << "Error: no such file or directory : " << av[1] << RESET << std::endl;
 		return (1);
 	}
 
