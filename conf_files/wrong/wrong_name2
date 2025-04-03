@@ -1,0 +1,13 @@
+
+# this is a wrong configuration file because
+# process and stock have the same name
+
+stockA:10
+stockB:10
+X:10
+
+processA:(a:1):(b:1):5
+processB:(b:1):(c:1):5
+X:(c:1):(d:2):5
+
+optimize:(c)

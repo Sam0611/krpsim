@@ -1,0 +1,9 @@
+
+# this is a wrong configuration file because
+# stock quantity is not a number
+
+stock:a
+
+process:(a:1):(b:1):5
+
+optimize:(time)

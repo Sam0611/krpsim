@@ -1,0 +1,11 @@
+
+# this is a wrong configuration file because
+# missing letters in optimize
+
+stockA:10
+stockB:10
+
+processA:(a:1):(b:1):5
+processB:(b:1):(c:1):5
+
+opti:(c)

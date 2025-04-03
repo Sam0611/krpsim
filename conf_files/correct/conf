@@ -1,0 +1,13 @@
+
+#comment
+a:10
+b:10
+
+    # another comment
+
+
+processA:(a:1):(b:1):5
+processB:(b:1):(c:1):5
+processC:(a:1;b:1):(c:3):20
+
+optimize:(c)

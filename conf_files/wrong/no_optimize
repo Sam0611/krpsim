@@ -1,0 +1,7 @@
+
+# this is a wrong configuration file because
+# it has no element to optimize
+
+stock:10
+
+process:(a:1):(b:1):5

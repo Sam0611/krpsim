@@ -1,0 +1,10 @@
+
+# this is a wrong configuration file because
+# same process name
+
+stock:10
+
+process:(a:1):(b:1):5
+process:(a:1):(b:1):5
+
+optimize:(time)

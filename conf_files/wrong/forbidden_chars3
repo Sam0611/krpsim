@@ -1,0 +1,9 @@
+
+# this is a wrong configuration file because
+# it has forbidden characters
+
+stock:10
+
+process: (a:1):(b:1):5
+
+optimize:(time)
