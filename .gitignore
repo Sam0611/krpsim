@@ -1,3 +1,4 @@
 *.pdf
 resources
 builddir
+krpsim_output
