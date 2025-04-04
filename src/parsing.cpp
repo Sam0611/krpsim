@@ -18,11 +18,18 @@ bool    parse_file(std::string filename)
     bool relevant_line = false;
     while (std::getline(conf_file, line))
     {
-
+        // if line is a comment or is empty, it's not relevant
         if (!is_relevant_line(line))
         {
             relevant_line = false;
             continue ;
+        }
+
+        // if there is relevant lines after optimize line
+        if (line_type == OPTIMIZE_LINE)
+        {
+            std::cerr << RED << "Error: the file must end with one line indicating what to optimize" << RESET << std::endl;
+            return (false);
         }
         
         if (!relevant_line)
@@ -33,6 +40,13 @@ bool    parse_file(std::string filename)
 
         if (!parse_line(line, line_type))
             return (false);
+    }
+
+    // check if file contains all elements
+    if (line_type != OPTIMIZE_LINE)
+    {
+        std::cerr << RED << "Error: the file must contain at least one stock, one process, and exactly one line to indicate what to optimize" << RESET << std::endl;
+        return (false);
     }
 
     return (true);
@@ -82,7 +96,7 @@ bool    parse_stock_line(std::string line)
     {
         if (!isdigit(line[i]))
         {
-            std::cerr << RED << "Error: Stock quantity is not a valid number" << RESET << std::endl;
+            std::cerr << RED << "Error: Stock quantity '" << line.substr(pos + 1) << "' is not a valid number" << RESET << std::endl;
             return (false);
         }
         i++;
@@ -98,7 +112,7 @@ bool    parse_process_line(std::string line)
 {
     std::string process;
 
-    int i = 0;
+    std::size_t i = 0;
     while (isspace(line[i]))
         i++;
 
@@ -116,7 +130,86 @@ bool    parse_process_line(std::string line)
 
     // save process name
 
-    // check after first ':'
+    // check after first ':' until '):'
+    if (!check_process_resources(line.substr(pos + 1)))
+        return (false);
+
+    // get line after '):'
+    line = line.substr(line.find(')') + 2);
+
+    // check second process resources group until '):'
+    if (!check_process_resources(line))
+        return (false);
+
+    // check last element (delay) after '):' is a valid number
+    i = line.find(')') + 2;
+    while (line[i])
+    {
+        if (!isdigit(line[i]))
+        {
+            std::cerr << RED << "Error: Process delay is not a valid number" << RESET << std::endl;
+            return (false);
+        }
+        i++;
+    }
+
+    // save delay
+
+    return (true);
+}
+
+// (name:qt):
+// (name:qt;name:qt):
+bool    check_process_resources(std::string resources)
+{
+    // check parenthesis
+    std::size_t end = resources.find(')');
+    if (resources[0] != '(' || end == std::string::npos)
+    {
+        std::cerr << RED << "Error: Missing or misplaced parenthesis in process line" << RESET << std::endl;
+        return (false);
+    }
+    
+    // check process resources separator ':'
+    if (resources[end + 1] != ':')
+    {
+        std::cerr << RED << "Error: Missing or misplaced ':' in process line" << RESET << std::endl;
+        return (false);
+    }
+
+    // check content between parenthesis
+
+    std::size_t start;
+    std::string stock;
+    std::string quantity;
+    
+    while (resources[0] != ')')
+    {
+        // check stock name
+        start = 1;
+        end = resources.find(':');
+        if (end == std::string::npos)
+        {
+            std::cerr << RED << "Error: Missing ':' in process line" << RESET << std::endl;
+            return (false);
+        }
+        stock = resources.substr(start, end - start);
+        if (!check_name(stock))
+            return (false);
+
+        // check stock quantity
+        start = end + 1;
+        while (resources[end] != ';' && resources[end] != ')')
+            end++;
+        quantity = resources.substr(start, end - start);
+        if (!check_quantity(quantity))
+            return (false);
+
+        // save stock name and quantity in process
+
+        // cut resources checked from resources group
+        resources = resources.substr(end);
+    }
 
     return (true);
 }
@@ -137,13 +230,14 @@ bool    parse_optimize_line(std::string line)
 
     // check optimize word
     std::string word = "optimize";
-    if (line.substr(i, pos - i).compare(word) == 0 || word.length() != line.substr(i, pos - i).length())
+    if (line.substr(i, pos - i).compare(word) || word.length() != line.substr(i, pos - i).length())
     {
         std::cerr << RED << "Error: 'optimize' expression is missing or misspelled" << RESET << std::endl;
         return (false);
     }
 
     // check after ':'
+    // check_stock_to_optimize()
 
     return (true);
 }
@@ -171,6 +265,21 @@ bool    check_name(std::string name)
         i++;
     }
 
+    return (true);
+}
+
+bool    check_quantity(std::string quantity)
+{
+    int i = 0;
+    while (quantity[i])
+    {
+        if (!isdigit(quantity[i]))
+        {
+            std::cerr << RED << "Error: Stock quantity '"<< quantity <<"' is not a valid number" << RESET << std::endl;
+            return (false);
+        }
+        i++;
+    }
     return (true);
 }
 

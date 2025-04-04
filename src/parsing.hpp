@@ -17,8 +17,10 @@ bool    parse_line(std::string line, int type);
 bool    is_relevant_line(std::string line);
 bool    is_special_char(char c);
 bool    check_name(std::string name);
+bool    check_quantity(std::string quantity);
 bool    parse_stock_line(std::string line);
 bool    parse_process_line(std::string line);
 bool    parse_optimize_line(std::string line);
+bool    check_process_resources(std::string resources);
 
 #endif
