@@ -1,9 +1,9 @@
 
 # this is a wrong configuration file because
-# there are characters in the wrong place (parenthesis in stock)
+# missing stock name
 
-stockA:10
-stockB:(10)
+:10
+stockB:10
 
 processA:(a:1):(b:1):5
 processB:(b:1):(c:1):5

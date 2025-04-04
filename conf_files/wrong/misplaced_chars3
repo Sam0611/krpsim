@@ -5,7 +5,7 @@
 stockA:10
 stockB:10
 
-process1:(a:1):(b:1)):5
-process2:(b:1):(c:1):5
+processA:(a:1):(b:1)):5
+processB:(b:1):(c:1):5
 
 optimize:(c)
