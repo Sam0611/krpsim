@@ -214,7 +214,7 @@ bool    check_process_resources(std::string resources)
     return (true);
 }
 
-// optimize:(stockC;time)
+// optimize:(stock_name;time)
 bool    parse_optimize_line(std::string line)
 {
     int i = 0;
@@ -237,18 +237,32 @@ bool    parse_optimize_line(std::string line)
     }
 
     // check after ':'
-    // check_stock_to_optimize()
+    check_stock_to_optimize(line.substr(pos + 1));
 
     return (true);
 }
 
-// not valid : a__b, _a, a_, a1, a-b
-// valid : abc, abc_abc, a_a_a, A
+// (time)
+// (stock;time)
+bool    check_stock_to_optimize(std::string to_optimize)
+{
+    std::cout << to_optimize << std::endl;
+    return (true);
+}
+
+// not valid : a__b, _a, a_, a-b, 1, 1a
+// valid : abc, abc_abc, a_a_a, A, a1, a_1
 bool    check_name(std::string name)
 {
     if (name.empty())
     {
         std::cerr << RED << "Error: Missing name for stock or process" << RESET << std::endl;
+        return (false);
+    }
+
+    if (isdigit(name[0]))
+    {
+        std::cerr << RED << "Error: Invalid name: " << name << " cannot begin with a digit" << RESET << std::endl;
         return (false);
     }
 
@@ -259,13 +273,13 @@ bool    check_name(std::string name)
         {
             if (i == 0 || !name[i + 1] || name[i + 1] == '_')
             {
-                std::cerr << RED << "Error: Invalid name: " << name << " must have underscore surrounded by letters" << RESET << std::endl;
+                std::cerr << RED << "Error: Invalid name: " << name << " must have underscore surrounded by letters or digits" << RESET << std::endl;
                 return (false);
             }
         }
-        else if (!isalpha(name[i]))
+        else if (!isalnum(name[i]))
         {
-            std::cerr << RED << "Error: Invalid name: " << name << " must only contain letters or underscores" << RESET << std::endl;
+            std::cerr << RED << "Error: Invalid name: " << name << " must only contain letters, digits or underscores" << RESET << std::endl;
             return (false);
         }
         i++;
@@ -300,12 +314,4 @@ bool    is_relevant_line(std::string line)
         return (false);
 
     return (true);
-}
-
-// special characters authorized " : ; ( ) "
-bool    is_special_char(char c)
-{
-    if (c == ':' || c == ';' || c == '(' || c == ')')
-        return (true);
-    return (false);
 }
