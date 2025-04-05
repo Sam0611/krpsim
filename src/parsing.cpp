@@ -246,6 +246,12 @@ bool    parse_optimize_line(std::string line)
 // valid : abc, abc_abc, a_a_a, A
 bool    check_name(std::string name)
 {
+    if (name.empty())
+    {
+        std::cerr << RED << "Error: Missing name for stock or process" << RESET << std::endl;
+        return (false);
+    }
+
     int i = 0;
     while (name[i])
     {
