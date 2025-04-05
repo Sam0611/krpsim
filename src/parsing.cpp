@@ -246,7 +246,38 @@ bool    parse_optimize_line(std::string line)
 // (stock;time)
 bool    check_stock_to_optimize(std::string to_optimize)
 {
-    std::cout << to_optimize << std::endl;
+    // check parenthesis
+    std::size_t end = to_optimize.find(')');
+    if (to_optimize[0] != '(' || end == std::string::npos)
+    {
+        std::cerr << RED << "Error: Missing or misplaced parenthesis in optimize line" << RESET << std::endl;
+        return (false);
+    }
+
+    // check content between parenthesis
+
+    std::size_t start;
+    std::string stock;
+    
+    while (to_optimize[0] != ')')
+    {
+        // check stock name
+        start = 1;
+        end = 1;
+
+        while (to_optimize[end] != ';' && to_optimize[end] != ')')
+            end++;
+
+        stock = to_optimize.substr(start, end - start);
+        if (!check_name(stock))
+            return (false);
+
+        // save stock name
+
+        // cut to_optimize checked from to_optimize group
+        to_optimize = to_optimize.substr(end);
+    }
+
     return (true);
 }
 
