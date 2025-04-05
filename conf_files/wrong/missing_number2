@@ -1,0 +1,10 @@
+# this is a wrong configuration file because
+# stock quantity for process is missing
+
+stockA:10
+stockB:10
+
+processA:(a:):(b:1):2
+processB:(b:1):(c:1):5
+
+optimize:(c)

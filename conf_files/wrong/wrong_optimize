@@ -1,0 +1,10 @@
+# this is a wrong configuration file because
+# optimize line has 2 pairs of parenthesis
+
+stockA:10
+stockB:10
+
+processA:(a:1):(b:1):5
+processB:(b:1):(c:1):5
+
+optimize:(c):(time)
