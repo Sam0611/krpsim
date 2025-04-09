@@ -1,1 +1,1 @@
-sources = files('main.cpp', 'parsing.cpp')
+sources = files('main.cpp', 'parsing.cpp', 'scheduler.cpp', 'process.cpp', 'stock.cpp')
