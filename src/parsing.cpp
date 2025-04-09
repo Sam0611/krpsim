@@ -92,6 +92,13 @@ bool    parse_stock_line(std::string line)
 
     // check quantity after ':'
     i = pos + 1;
+
+    if (!line[i])
+    {
+        std::cerr << RED << "Error: Stock quantity is missing" << RESET << std::endl;
+        return (false);
+    }
+
     while (line[i])
     {
         if (!isdigit(line[i]))
@@ -143,6 +150,13 @@ bool    parse_process_line(std::string line)
 
     // check last element (delay) after '):' is a valid number
     i = line.find(')') + 2;
+
+    if (!line[i])
+    {
+        std::cerr << RED << "Error: Process delay missing" << RESET << std::endl;
+        return (false);
+    }
+
     while (line[i])
     {
         if (!isdigit(line[i]))
@@ -170,7 +184,7 @@ bool    check_process_resources(std::string resources)
         return (false);
     }
     
-    // check process resources separator ':'
+    // check process resources separator ':' after parenthesis
     if (resources[end + 1] != ':')
     {
         std::cerr << RED << "Error: Missing or misplaced ':' in process line" << RESET << std::endl;
@@ -188,7 +202,7 @@ bool    check_process_resources(std::string resources)
         // check stock name
         start = 1;
         end = resources.find(':');
-        if (end == std::string::npos)
+        if (end == resources.find(')') + 1)
         {
             std::cerr << RED << "Error: Missing ':' in process line" << RESET << std::endl;
             return (false);
@@ -321,6 +335,12 @@ bool    check_name(std::string name)
 
 bool    check_quantity(std::string quantity)
 {
+    if (quantity.empty())
+    {
+        std::cerr << RED << "Error: Missing stock quantity in a process" << RESET << std::endl;
+        return (false);
+    }
+
     int i = 0;
     while (quantity[i])
     {
