@@ -1,5 +1,6 @@
 
 #include "parsing.hpp"
+#include "scheduler.hpp"
 
 void    save_output(std::ofstream &file, std::string output)
 {
@@ -15,7 +16,9 @@ int main(int ac, char **av)
         return (1);
     }
 
-    if (!parse_file(av[1]))
+    Scheduler scheduler;
+
+    if (!parse_file(av[1], scheduler))
         return (1);
 
     

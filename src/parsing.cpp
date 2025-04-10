@@ -3,8 +3,10 @@
 #define STOCK_LINE 1
 #define PROCESS_LINE 2
 #define OPTIMIZE_LINE 3
+#define NEEDED 1
+#define PRODUCED 2
 
-bool    parse_file(std::string filename)
+bool    parse_file(std::string filename, Scheduler &scheduler)
 {
     std::ifstream conf_file(filename);
     if (!conf_file)
@@ -38,7 +40,7 @@ bool    parse_file(std::string filename)
             line_type++;
         }
 
-        if (!parse_line(line, line_type))
+        if (!parse_line(line, line_type, scheduler))
             return (false);
     }
 
@@ -52,23 +54,23 @@ bool    parse_file(std::string filename)
     return (true);
 }
 
-bool    parse_line(std::string line, int type)
+bool    parse_line(std::string line, int type, Scheduler &scheduler)
 {
     switch (type)
     {
         case STOCK_LINE:
-            return (parse_stock_line(line));
+            return (parse_stock_line(line, scheduler));
         case PROCESS_LINE:
-            return(parse_process_line(line));
+            return(parse_process_line(line, scheduler));
         case OPTIMIZE_LINE:
-            return(parse_optimize_line(line));
+            return(parse_optimize_line(line, scheduler));
     }
 
     return (false);
 }
 
 // stockA:10
-bool    parse_stock_line(std::string line)
+bool    parse_stock_line(std::string line, Scheduler &scheduler)
 {
     std::string stock;
 
@@ -87,8 +89,6 @@ bool    parse_stock_line(std::string line)
     stock = line.substr(i, pos - i);
     if (!check_name(stock))
         return (false);
-
-    // save stock name
 
     // check quantity after ':'
     i = pos + 1;
@@ -109,15 +109,16 @@ bool    parse_stock_line(std::string line)
         i++;
     }
 
-    // save stock quantity line.substr(pos + 1)
+    scheduler.add_stock(stock, atoi(line.substr(pos + 1).c_str()));
 
     return (true);
 }
 
 // process_name:(stockA:5;stockB:10):(stockC:1):10
-bool    parse_process_line(std::string line)
+bool    parse_process_line(std::string line, Scheduler &scheduler)
 {
     std::string process;
+    std::string delay;
 
     std::size_t i = 0;
     while (isspace(line[i]))
@@ -135,17 +136,17 @@ bool    parse_process_line(std::string line)
     if (!check_name(process))
         return (false);
 
-    // save process name
+    scheduler.add_process(process);
 
     // check after first ':' until '):'
-    if (!check_process_resources(line.substr(pos + 1)))
+    if (!check_process_resources(line.substr(pos + 1), scheduler, process, NEEDED))
         return (false);
 
     // get line after '):'
     line = line.substr(line.find(')') + 2);
 
     // check second process resources group until '):'
-    if (!check_process_resources(line))
+    if (!check_process_resources(line, scheduler, process, PRODUCED))
         return (false);
 
     // check last element (delay) after '):' is a valid number
@@ -157,24 +158,25 @@ bool    parse_process_line(std::string line)
         return (false);
     }
 
-    while (line[i])
+    delay = line.substr(i);
+
+    for (i = 0; i < delay.length(); i++)
     {
-        if (!isdigit(line[i]))
+        if (!isdigit(delay[i]))
         {
             std::cerr << RED << "Error: Process delay is not a valid number" << RESET << std::endl;
             return (false);
         }
-        i++;
     }
 
-    // save delay
+    scheduler.add_process_delay(process, atoi(delay.c_str()));
 
     return (true);
 }
 
 // (name:qt):
 // (name:qt;name:qt):
-bool    check_process_resources(std::string resources)
+bool    check_process_resources(std::string resources, Scheduler &scheduler, std::string process_name, int type)
 {
     // check parenthesis
     std::size_t end = resources.find(')');
@@ -219,7 +221,7 @@ bool    check_process_resources(std::string resources)
         if (!check_quantity(quantity))
             return (false);
 
-        // save stock name and quantity in process
+        scheduler.add_process_resources(process_name, stock, atoi(quantity.c_str()), type);
 
         // cut resources checked from resources group
         resources = resources.substr(end);
@@ -229,7 +231,7 @@ bool    check_process_resources(std::string resources)
 }
 
 // optimize:(stock_name;time)
-bool    parse_optimize_line(std::string line)
+bool    parse_optimize_line(std::string line, Scheduler &scheduler)
 {
     int i = 0;
     while (isspace(line[i]))
@@ -251,14 +253,14 @@ bool    parse_optimize_line(std::string line)
     }
 
     // check after ':'
-    check_stock_to_optimize(line.substr(pos + 1));
+    check_stock_to_optimize(line.substr(pos + 1), scheduler);
 
     return (true);
 }
 
 // (time)
 // (stock;time)
-bool    check_stock_to_optimize(std::string to_optimize)
+bool    check_stock_to_optimize(std::string to_optimize, Scheduler &scheduler)
 {
     // check parenthesis
     std::size_t end = to_optimize.find(')');
@@ -286,7 +288,7 @@ bool    check_stock_to_optimize(std::string to_optimize)
         if (!check_name(stock))
             return (false);
 
-        // save stock name
+        scheduler.add_to_optimize(stock);
 
         // cut to_optimize checked from to_optimize group
         to_optimize = to_optimize.substr(end);
