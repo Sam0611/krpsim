@@ -11,6 +11,6 @@ b:10
 processA:(a:1):(b:1):5
 processB:(b:1):(c:1):5
 processC:(a:1;b:1):(c:3):20
-processC:(a:1;b:1;c:1):(d:1):30
+processD:(a:1;b:1;c:1):(d:1):30
 #opti
 optimize:(c)

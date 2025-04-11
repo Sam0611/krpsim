@@ -4,7 +4,7 @@
 
 stock:10
 
-process:(a:1):(b:1):5
-process:(a:1):(b:1):5
+process1:(a:1):(b:1):5
+process1:(b:1):(c:1):5
 
 optimize:(time)
