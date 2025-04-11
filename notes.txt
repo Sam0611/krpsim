@@ -1,6 +1,4 @@
 
-- parsing
-
 - output :
     nombre de processus
     nombre de stock
@@ -23,7 +21,7 @@
     equipment => 0
     euro => 2
 
-- print and save output in a file (conf_file_output)
+- print and save output in a file (krpsim_output)
 
 
 Infos utiles :
