@@ -8,6 +8,7 @@ class Stock
     public:
         Stock(std::string name, int quantity);
         ~Stock();
+        std::string getName() const;
     
     private:
         Stock();

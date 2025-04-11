@@ -109,7 +109,11 @@ bool    parse_stock_line(std::string line, Scheduler &scheduler)
         i++;
     }
 
-    scheduler.add_stock(stock, atoi(line.substr(pos + 1).c_str()));
+    if (scheduler.add_stock(stock, atoi(line.substr(pos + 1).c_str())))
+    {
+        std::cerr << RED << "Error: " << stock << " already exists" << RESET << std::endl;
+        return (false);
+    }
 
     return (true);
 }
@@ -136,7 +140,11 @@ bool    parse_process_line(std::string line, Scheduler &scheduler)
     if (!check_name(process))
         return (false);
 
-    scheduler.add_process(process);
+    if (scheduler.add_process(process))
+    {
+        std::cerr << RED << "Error: " << process << " already exists" << RESET << std::endl;
+        return (false);
+    }
 
     // check after first ':' until '):'
     if (!check_process_resources(line.substr(pos + 1), scheduler, process, NEEDED))
@@ -221,7 +229,11 @@ bool    check_process_resources(std::string resources, Scheduler &scheduler, std
         if (!check_quantity(quantity))
             return (false);
 
-        scheduler.add_process_resources(process_name, stock, atoi(quantity.c_str()), type);
+        if (scheduler.add_process_resources(process_name, stock, atoi(quantity.c_str()), type))
+        {
+            std::cerr << RED << "Error: Incorrect stock name '" << stock << "' in process ressources" << RESET << std::endl;
+            return (false);
+        }
 
         // cut resources checked from resources group
         resources = resources.substr(end);
@@ -274,6 +286,7 @@ bool    check_stock_to_optimize(std::string to_optimize, Scheduler &scheduler)
 
     std::size_t start;
     std::string stock;
+    std::string authorized_name = "time";
     
     while (to_optimize[0] != ')')
     {
@@ -285,13 +298,25 @@ bool    check_stock_to_optimize(std::string to_optimize, Scheduler &scheduler)
             end++;
 
         stock = to_optimize.substr(start, end - start);
-        if (!check_name(stock))
-            return (false);
+        if (stock.compare(authorized_name) || stock.length() != authorized_name.length())
+            if (!check_name(stock))
+                return (false);
 
-        scheduler.add_to_optimize(stock);
+        if (scheduler.add_to_optimize(stock))
+        {
+            std::cerr << RED << "Error: optimize line: stock name is incorrect" << RESET << std::endl;
+            return (false);
+        }
 
         // cut to_optimize checked from to_optimize group
         to_optimize = to_optimize.substr(end);
+    }
+
+    // check there is nothing after parenthesis
+    if (to_optimize.length() > 1)
+    {
+        std::cerr << RED << "Error: optimize line: something was found after parenthesis" << RESET << std::endl;
+        return (false);
     }
 
     return (true);
@@ -304,6 +329,20 @@ bool    check_name(std::string name)
     if (name.empty())
     {
         std::cerr << RED << "Error: Missing name for stock or process" << RESET << std::endl;
+        return (false);
+    }
+
+    std::string forbidden_name = "optimize";
+    if (!name.compare(forbidden_name) && name.length() == forbidden_name.length())
+    {
+        std::cerr << RED << "Error: '" << forbidden_name << "' is a forbidden name !" << RESET << std::endl;
+        return (false);
+    }
+
+    forbidden_name = "time";
+    if (!name.compare(forbidden_name) && name.length() == forbidden_name.length())
+    {
+        std::cerr << RED << "Error: '" << forbidden_name << "' is a forbidden name !" << RESET << std::endl;
         return (false);
     }
 
