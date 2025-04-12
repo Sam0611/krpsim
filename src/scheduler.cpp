@@ -1,4 +1,6 @@
 #include "scheduler.hpp"
+#include <iostream>
+#include <fstream>
 
 Scheduler::Scheduler()
 {
@@ -89,4 +91,52 @@ void Scheduler::add_process_delay(std::string name, int delay)
             _processes[i]->add_delay(delay);
         }
     }
+}
+
+int Scheduler::getStockSize() const
+{
+    return (_stocks.size());
+}
+
+int Scheduler::getProcessSize() const
+{
+    return (_processes.size());
+}
+
+int Scheduler::getToOptimizeSize() const
+{
+    return (_to_optimize.size());
+}
+
+void Scheduler::display_stocks(std::ofstream &os, std::string separator) const
+{
+    for (size_t i = 0; i < _stocks.size(); i++)
+    {
+        os << _stocks[i]->getName();
+        if (i + 1 != _stocks.size())
+            os << separator;
+    }
+    os << std::endl;
+}
+
+void Scheduler::display_processes(std::ofstream &os, std::string separator) const
+{
+    for (size_t i = 0; i < _processes.size(); i++)
+    {
+        os << _processes[i]->getName();
+        if (i + 1 != _processes.size())
+            os << separator;
+    }
+    os << std::endl;
+}
+
+void Scheduler::display_to_optimize(std::ofstream &os, std::string separator) const
+{
+    for (size_t i = 0; i < _to_optimize.size(); i++)
+    {
+        os << _to_optimize[i];
+        if (i + 1 != _to_optimize.size())
+            os << separator;
+    }
+    os << std::endl;
 }

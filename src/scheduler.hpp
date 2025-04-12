@@ -17,6 +17,12 @@ class Scheduler
         int add_process_resources(std::string process_name, std::string stock, int quantity, int type);
         void add_process_delay(std::string name, int delay);
         int add_to_optimize(std::string name);
+        int getStockSize() const;
+        int getProcessSize() const;
+        int getToOptimizeSize() const;
+        void display_stocks(std::ofstream &os, std::string separator) const;
+        void display_processes(std::ofstream &os, std::string separator) const;
+        void display_to_optimize(std::ofstream &os, std::string separator) const;
 
     private:
         std::vector<Stock *>        _stocks;

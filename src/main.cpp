@@ -21,17 +21,27 @@ int main(int ac, char **av)
     if (!parse_file(av[1], scheduler))
         return (1);
 
-    
-    // std::ofstream output_file("krpsim_output");
-    // std::string line;
-    // while (std::getline(conf_file, line))
-    // {
-    //     if (line[0] != '#')
-    //     {
-    //         save_output(output_file, line);
-    //     }
-    // }
-    // output_file.close();
+    // save output in file
+
+    std::string filename = "krpsim_output";
+    std::ofstream output_file(filename);
+
+    output_file << "There are " << scheduler.getStockSize() << " stocks: ";
+    scheduler.display_stocks(output_file, ", ");
+
+    output_file << "There are " << scheduler.getProcessSize() << " processes: ";
+    scheduler.display_processes(output_file, ", ");
+
+    output_file << "There are " << scheduler.getToOptimizeSize() << " to optimize: ";
+    scheduler.display_to_optimize(output_file, ", ");
+
+    output_file.close();
+
+    // read output file
+    std::ifstream file(filename);
+    std::string line;
+    while (std::getline(file, line))
+        std::cout << line << std::endl;
 
     return (0);
 }
