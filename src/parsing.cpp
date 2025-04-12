@@ -265,9 +265,7 @@ bool    parse_optimize_line(std::string line, Scheduler &scheduler)
     }
 
     // check after ':'
-    check_stock_to_optimize(line.substr(pos + 1), scheduler);
-
-    return (true);
+    return (check_stock_to_optimize(line.substr(pos + 1), scheduler));
 }
 
 // (time)
